@@ -1,7 +1,8 @@
 {
-    ec2-region: '',
-    ec2-instance-id: '',
-    ec2-key: '',
-    ec2-secret-key: '',
-    ssh-key-path: '',
+    ec2_region: '',
+    ec2_instance_id: '',
+    ec2_key: '',
+    ec2_secret_key: '',
+    ssh_key_path: '',
+    ec2_security_group: '',
 }
