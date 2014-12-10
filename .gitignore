@@ -2,5 +2,5 @@
 *~
 .project
 .pydevproject
-settings.py
+settings.yml
 log.txt
