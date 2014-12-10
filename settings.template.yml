@@ -1,0 +1,7 @@
+{
+    ec2-region: '',
+    ec2-instance-id: '',
+    ec2-key: '',
+    ec2-secret-key: '',
+    ssh-key-path: '',
+}
