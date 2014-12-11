@@ -26,6 +26,25 @@ class EC2_Connection(object):
     def instance_list(self):
         instances = self.reservation_list()[0].instances
         return instances
+    
+    def get_available_types(self):
+        instances = self.reservation_list()[0].instances
+        keys = []
+        for i in instances:
+            if i.instance_type not in keys:
+                keys.append(i.instance_type)
+        return keys
+    
+    def instance_detail_list(self):
+        keys = self.get_available_types()
+        instances = self.instance_list()
+        instance_dict = {}
+        for k in keys:
+            instance_dict[k] = []
+            for i in instances:
+                if i.instance_type == k:
+                    instance_dict[k].append(i.id)
+        return instance_dict
         
     def start_instance(self, instance_id):
         try:
@@ -36,12 +55,7 @@ class EC2_Connection(object):
     
     def stop_instance(self, instance_id):
         try:
-            self.conn.stop_instances(instance_ids=instance_id)
+            instance = self.conn.stop_instances(instance_ids=instance_id)
         except Exception as e:
-            logger.critical("Error stopping instance {0}".format(instance_id))
-            logger.error(e)
+            print(e)
             return
-
-
-
-    
