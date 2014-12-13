@@ -12,7 +12,6 @@ import json
 from boto.manage.cmdshell import sshclient_from_instance
 
 # private imports
-import cascading_options as co
 import ec2_metal_ops as metal
 
 class Shell_Operations(object):

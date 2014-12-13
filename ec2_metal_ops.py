@@ -6,13 +6,12 @@ import logging
 import os
 import sys
 import time
+import datetime
 import json
 
 # third-party imports
 import boto.ec2
 
-# private imports
-import cascading_options as co
 
 class EC2_Connection(object):
     
@@ -59,3 +58,18 @@ class EC2_Connection(object):
         except Exception as e:
             print(e)
             return
+        
+    def instance_uptime(self, instance_id):
+        try:
+            instances = self.instance_list()
+            for i in instances:
+                if i.id == instance_id:
+                    tmp = datetime.datetime.fromtimestamp(\
+                                time.mktime(time.strptime(i.launch_time.split('.')[0],
+                                                          "%Y-%m-%dT%H:%M:%S")))
+                    uptime = datetime.datetime.now() - tmp
+            return uptime
+        except Exception as e:
+            print(e)
+            return
+        
