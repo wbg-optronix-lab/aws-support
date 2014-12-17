@@ -1,0 +1,3 @@
+git+https://github.com/jmarini/cascading-options.git
+boto==2.34.0
+tox
