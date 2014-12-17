@@ -8,12 +8,12 @@ except ImportError:
 
 
 setup(
-    name='aws-simulations',
-    version='0.9.0',
+    name='aws-support',
+    version='0.10.0',
     url='',
     author='Neil Newman, Jonathan Marini',
     author_email='nnewman2@albany.edu, jmarini@ieee.org',
-    packages=['aws_simulations'],
-    install_requires=['boto'],
+    packages=['aws_support'],
+    install_requires=['boto', 'paramiko'],
     test_suite='tests',
 )
