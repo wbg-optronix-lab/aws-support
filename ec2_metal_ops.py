@@ -1,30 +1,37 @@
-#!/usr/bin/env python
-from __future__ import print_function, unicode_literals
+from __future__ import print_function, unicode_literals, absolute_import
 
-# first-party imports
+import datetime
+import json
 import logging
 import os
 import sys
 import time
-import datetime
-import json
 
-# third-party imports
 import boto.ec2
 
 
 class EC2_Connection(object):
-    
+    """
+    Handles connecting to EC2 and handling reservations and instances.
+    """
+
     def __init__(self, ec2_region, aws_access_key_id, aws_secret_access_key):
-        self.conn = boto.ec2.connect_to_region(ec2_region, aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+        self.conn = boto.ec2.connect_to_region(
+            ec2_region,
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key)
     
     def reservation_list(self):
-        reservations = self.conn.get_all_reservations()
-        return reservations
+        """
+        Returns a list of reservations.
+        """
+        return self.conn.get_all_reservations()
     
     def instance_list(self):
-        instances = self.reservation_list()[0].instances
-        return instances
+        """
+        Returns a list of all instances.
+        """
+        return self.conn.get_only_instances()
     
     def get_available_types(self):
         instances = self.reservation_list()[0].instances
@@ -46,18 +53,16 @@ class EC2_Connection(object):
         return instance_dict
         
     def start_instance(self, instance_id):
-        try:
-            instance = self.conn.start_instances(instance_ids=instance_id)
-        except Exception as e:
-            print(e)
-            return
+        """
+        Start the instance with the specified id. Raises an exception on error.
+        """
+        self.conn.start_instances(instance_ids=instance_id)
     
     def stop_instance(self, instance_id):
-        try:
-            instance = self.conn.stop_instances(instance_ids=instance_id)
-        except Exception as e:
-            print(e)
-            return
+        """
+        Stop the instance with the specified id. Raises an exception on error.
+        """
+        self.conn.stop_instances(instance_ids=instance_id)
         
     def instance_uptime(self, instance_id):
         try:
@@ -73,3 +78,9 @@ class EC2_Connection(object):
             print(e)
             return
         
+    def get_instance(self, instance_id):
+        """
+        Returns the instance with the specified id. Raises an exception on
+        error.
+        """
+        return self.conn.get_only_instances(instance_ids=[instance_id])[0]
