@@ -34,24 +34,19 @@ class EC2_Connection(object):
         return self.conn.get_only_instances()
     
     def get_available_types(self):
-        instances = self.reservation_list()[0].instances
-        keys = []
-        for i in instances:
-            if i.instance_type not in keys:
-                keys.append(i.instance_type)
-        return keys
+        """
+        Return a list of all instance types availiable.
+        """
+        return list(set(i.instance_type for i in self.instance_list()))
     
     def instance_detail_list(self):
-        keys = self.get_available_types()
-        instances = self.instance_list()
-        instance_dict = {}
-        for k in keys:
-            instance_dict[k] = []
-            for i in instances:
-                if i.instance_type == k:
-                    instance_dict[k].append(i.id)
-        return instance_dict
-        
+        """
+        Returns a dictionary mapping instance types to the availiable instance
+        ids for that type as a list.
+        """
+        return {t: [i.id for i in self.instance_list() if i.instance_type == t]
+                for t in self.get_available_types()}
+
     def start_instance(self, instance_id):
         """
         Start the instance with the specified id. Raises an exception on error.
@@ -65,18 +60,14 @@ class EC2_Connection(object):
         self.conn.stop_instances(instance_ids=instance_id)
         
     def instance_uptime(self, instance_id):
-        try:
-            instances = self.instance_list()
-            for i in instances:
-                if i.id == instance_id:
-                    tmp = datetime.datetime.fromtimestamp(\
-                                time.mktime(time.strptime(i.launch_time.split('.')[0],
-                                                          "%Y-%m-%dT%H:%M:%S")))
-                    uptime = datetime.datetime.now() - tmp
-            return uptime
-        except Exception as e:
-            print(e)
-            return
+        """
+        Get the uptime of the instance with the specified id. Raises an
+        exception on error.
+        """
+        instance = self.get_instance(instance_id)
+        timestamp = datetime.datetime.strptime(instance.launch_time,
+                                               '%Y-%m-%dT%H:%M:%S.%fZ')
+        return datetime.datetime.now() - timestamp
         
     def get_instance(self, instance_id):
         """
